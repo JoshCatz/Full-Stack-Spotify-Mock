@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+:root {
+    --primary-color: #ffffff;
+    --secondary-color: #a7a790;
+}
+
+body {
+    background-color: black;
+}
+
+.album_title {
+    color: var(--primary-color);
+}
+
+.album_details {
+    color: var(--secondary-color);
+}
+
+.song_title {
+    color: var(--primary-color);
+}
+
+.song_details {
+    color: var(--secondary-color);
+}
+
+.footer_title {
+    color: var(--primary-color)
+}
+
+.footer_details {
+    color: var(--secondary-color);
+}
