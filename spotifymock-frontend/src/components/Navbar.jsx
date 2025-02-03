@@ -3,7 +3,7 @@ import favorites from '../assets/imgs/FavoritesIcon.png'
 
 const Navbar = () => {
     return (
-        <div className="m-1 p-2 bg-[#121212] h-screen">
+        <div className="p-2 bg-[#121212] h-screen rounded-lg">
             <button>
                 <img src={library} alt="" />
             </button>

@@ -1,4 +1,5 @@
 import Home from '../assets/imgs/HomeIcon.png'
+import SearchIcon from '../assets/imgs/SearchIcon.png'
 
 const Search = () => {
     return (
@@ -14,12 +15,14 @@ const Search = () => {
                     <button>&gt;</button>
                 </div>
             </div>
-            <div className="search-bar flex items-center space-x-2">
+            <div className="search-bar items-center space-x-2 flex">
                 <button className="home-btn bg-[#1f1f20] px-1 py-3 rounded-4xl flex justify-center">
                     <img className="w-[50%]" src={Home} alt="" />
                 </button>
-                <form action="search" className="search-input px-2 py-3 bg-[#1f1f20] rounded-4xl space-x-2">
-                    <button>*</button>
+                <form action="search" className="search-input px-2 py-3 bg-[#1f1f20] rounded-4xl flex items-center">
+                    <button>
+                        <img className='search-icon w-[50%]'src={SearchIcon} alt="" />
+                    </button>
                     <input type="search" placeholder="What do you want to play?"/>
                 </form>
             </div>
