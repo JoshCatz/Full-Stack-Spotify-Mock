@@ -1,12 +1,20 @@
 from django.shortcuts import render
 from rest_framework import generics
-from .models import Album, SongDetails, Song
+from .models import Album, SongDetails, Song, Genre, Artist, Playlist, Library
 from .serializers import  (AlbumSerializer, 
                             SongDetailSerializer, 
-                            SongSerializer
+                            SongSerializer,
+                            GenreSerializer,
+                            ArtistSerializer,
+                            PlaylistSerializer,
+                            LibrarySerializer
                             )
 
 # Create your views here.
+class GenreView(generics.ListCreateAPIView):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+
 class AlbumView(generics.ListCreateAPIView):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer

@@ -1,7 +1,17 @@
 from rest_framework import serializers
-from .models import Song, SongDetails, Album
+from .models import Song, SongDetails, Album, Genre, Artist, Playlist, Library
 from rest_framework.reverse import reverse
 
+class GenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Genre
+        fields = ['title']
+
+
+class ArtistSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Artist
+        fields = ['pfp', 'label']
 
 class AlbumSerializer(serializers.HyperlinkedModelSerializer):
     songs = serializers.HyperlinkedRelatedField(
@@ -18,9 +28,13 @@ class SongDetailSerializer(serializers.HyperlinkedModelSerializer):
     title = serializers.SerializerMethodField()
     artist = serializers.SerializerMethodField()
     album = serializers.SerializerMethodField()
+    genre = serializers.SlugRelatedField(
+        queryset=Genre.objects.all(),
+        slug_field='title'
+    )
     class Meta:
         model = SongDetails
-        fields = ['title', 'album', 'artist', 'durations', 'lyrics']
+        fields = ['title', 'album', 'artist', 'duration', 'lyrics', 'genre']
 
     def get_title(self, obj):
         song = obj.songs.first()
@@ -72,3 +86,15 @@ class SongSerializer(serializers.ModelSerializer):
             )
 
         return representation
+    
+class PlaylistSerializer(serializers.ModelSerializer):
+    songs = serializers.RelatedField(queryset=Song.objects.all())
+    class Meta:
+        model = Playlist
+        fields = ['title', 'description', 'public', 'songs']
+
+class LibrarySerializer(serializers.ModelSerializer):
+    playlists = serializers.RelatedField(queryset=Song.objects.all())
+    class Meta:
+        model = Library
+        fields = ['playlists']
