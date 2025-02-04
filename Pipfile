@@ -9,6 +9,7 @@ djangorestframework = "*"
 djoser = "*"
 django-filter = "*"
 psycopg2 = "*"
+pillow = "*"
 
 [dev-packages]
 
