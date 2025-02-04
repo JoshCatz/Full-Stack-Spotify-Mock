@@ -5,6 +5,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsArtist
+
 from .models import Album, SongDetails, Song, Genre, Artist, Playlist, Library
 from .serializers import  (AlbumSerializer, 
                             SongDetailSerializer, 
@@ -21,9 +24,19 @@ class GenreView(generics.ListCreateAPIView):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
-class AlbumView(generics.ListCreateAPIView):
+# Album view for regular users
+
+class AlbumCreateView(generics.ListAPIView):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
+    permission_classes = [IsAuthenticated]
+
+# Album view for artist users
+
+class AlbumListView(generics.ListAPIView):
+    queryset = Album.objects.all()
+    serializer_class = AlbumSerializer
+    permission_classes = [IsAuthenticated, IsArtist]
 
 class AlbumDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = AlbumSerializer
@@ -74,9 +87,19 @@ class UserLoginView(APIView):
 
 
 # Artist Signup/Login Views
-class ArtistSignupView(generics.CreateAPIView):
-    queryset = Artist.objects.all()
-    serializer_class = ArtistSerializer
+class ArtistSignupView(APIView):
+    def post(self, request, *args, **kwargs):
+        data = request.data
+
+        user = User.objects.create_user(
+            username=data.get('username'),
+            password=data.get('password'),
+            email=data.get('email'),
+        )
+
+        artist = Artist.object.create(user=user, pfp='', label='')
+
+        return Response({'message': 'Artist registered successfully'})
 
 class ArtistLoginView(APIView):
 
