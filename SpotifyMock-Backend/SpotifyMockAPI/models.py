@@ -14,7 +14,11 @@ class Artist(models.Model):
     pfp = models.ImageField(upload_to='artist_pfp/', null=True, blank=True)
     label = models.CharField(max_length=255, null=True)
     joined = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.username
     
+
 class Album(models.Model):
     title = models.CharField(max_length=255)
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE, related_name='album')

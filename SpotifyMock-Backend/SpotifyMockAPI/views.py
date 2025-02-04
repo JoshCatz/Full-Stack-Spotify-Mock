@@ -1,5 +1,10 @@
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics, status
+from django.contrib.auth.models import User
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.contrib.auth import authenticate
+
 from .models import Album, SongDetails, Song, Genre, Artist, Playlist, Library
 from .serializers import  (AlbumSerializer, 
                             SongDetailSerializer, 
@@ -7,7 +12,8 @@ from .serializers import  (AlbumSerializer,
                             GenreSerializer,
                             ArtistSerializer,
                             PlaylistSerializer,
-                            LibrarySerializer
+                            LibrarySerializer,
+                            UserSerializer
                             )
 
 # Create your views here.
@@ -38,3 +44,57 @@ class SongDetailView(generics.RetrieveDestroyAPIView):
         song_id = self.kwargs.get('pk')
         song = Song.objects.get(pk=song_id)
         return SongDetails.objects.filter(pk=song.song_details.pk)
+    
+# User Signup/Login Views
+class UserSignupView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class UserLoginView(APIView):
+
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        user = authenticate(username=username, password=password)
+        if user is None:
+            return Response({'error': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+        if user is not None:
+            return Response({
+                'message': 'Login successful',
+                'username': user.username,
+                'email': user.email
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                'error': 'Invalid username or password'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+
+
+# Artist Signup/Login Views
+class ArtistSignupView(generics.CreateAPIView):
+    queryset = Artist.objects.all()
+    serializer_class = ArtistSerializer
+
+class ArtistLoginView(APIView):
+
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        
+        user = authenticate(username=username, password=password)
+
+        artist = Artist.objects.filter(user=user).first()
+        if artist:
+            return Response({
+                'message': 'Login successful',
+                'username': user.username,
+                'email': user.email
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                'error': 'Invalid username or password'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+        

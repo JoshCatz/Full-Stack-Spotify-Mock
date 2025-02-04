@@ -1,19 +1,50 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from .models import Song, SongDetails, Album, Genre, Artist, Playlist, Library
 from rest_framework.reverse import reverse
+
+class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, min_length=8)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password']
+
+    def create(self, validated_data):
+        user = User.objects.create(
+            username=validated_data['username'],
+            email=validated_data.get('email', '')
+        )
+        user.set_password(validated_data['password'])  # Hash the password
+        user.save()
+        return user
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = ['title']
 
-
 class ArtistSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
     class Meta:
         model = Artist
-        fields = ['pfp', 'label']
+        fields = ['user', 'pfp', 'label']
+
+    def create(self, validated_data):
+        user_data = validated_data.pop("user")
+        formatted_username = user_data['username'].replace(' ', '_')
+
+        user = User.objects.create_user(
+            username=formatted_username,
+            email=user_data['email'],
+            password=user_data['password']
+        )
+
+        artist = Artist.objects.create(user=user, **validated_data)
+        return artist
 
 class AlbumSerializer(serializers.HyperlinkedModelSerializer):
+    artist = ArtistSerializer(read_only=True)
     songs = serializers.HyperlinkedRelatedField(
         many=True,
         read_only=True,
@@ -22,7 +53,16 @@ class AlbumSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Album
-        fields = ['id', 'title', 'artist', 'songs', 'genre']
+        fields = ['id', 'title', 'songs', 'artist']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        representation['artist'] = {
+            'name':instance.artist.name
+        }
+
+        return representation
 
 class SongDetailSerializer(serializers.HyperlinkedModelSerializer):
     title = serializers.SerializerMethodField()
@@ -98,3 +138,4 @@ class LibrarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Library
         fields = ['playlists']
+
