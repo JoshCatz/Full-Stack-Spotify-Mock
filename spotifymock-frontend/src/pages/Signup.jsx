@@ -40,6 +40,7 @@ const ArtistSignUp = () => {
             <div className="login-card bg-[#121212] w-[80%] h-[90%] rounded-lg mt-8 px-4 py-2 pt-10 flex flex-col items-center text-white space-y-4">
                 <img className="w-[50px] h-[50px]" src={SpotifyLogo} alt="" />
                 <h1 className="text-3xl font-bold">Sign Up For Spotify</h1>
+                <p className="text-sm text-neutral-400">By Joshua Catzoela</p>
 
                 <form onSubmit={handleSubmit} className="login-form flex flex-col space-y-3">
                     <label htmlFor="username" className="text-[0.8em] font-semibold">Username</label>
@@ -59,7 +60,7 @@ const ArtistSignUp = () => {
 
                 <p className="text-neutral-400 mt-4">
                     Have have an account?{' '}
-                    <Link to="/artist/login" className="text-white underline">
+                    <Link to="/login" className="text-white underline">
                         Log in to Spotify
                     </Link>
                 </p>

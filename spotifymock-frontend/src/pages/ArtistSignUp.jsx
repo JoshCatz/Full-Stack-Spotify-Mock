@@ -14,16 +14,25 @@ const ArtistSignUp = () => {
         e.preventDefault(); // Prevent page refresh
 
         try {
-            const response = await axios.post('http://localhost:8000/auth/jwt/create/', {
+            const response = await axios.post('http://localhost:8000/auth/users/', {
+                username: username,
+                password: password,
+                email: email,
+            });
+
+            const loginResponse = await axios.post('http://localhost:8000/auth/jwt/create/', {
                 username: username,
                 password: password,
             });
+            
 
-            localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
+            const { access, refresh } = loginResponse.data;
+
+            localStorage.setItem('accessToken', access);
+            localStorage.setItem('refreshToken', refresh);
 
             // Redirect the user to the artist dashboard/homepage
-            navigate('/');
+            navigate('/artist/login/');
 
         } catch (err) {
             // Set error message if login fails

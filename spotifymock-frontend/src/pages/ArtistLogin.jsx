@@ -18,8 +18,10 @@ const ArtistLogin = () => {
                 password: password,
             });
 
-            localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
+            const { access, refresh } = loginResponse.data;
+
+            localStorage.setItem('accessToken', access);
+            localStorage.setItem('refreshToken', refresh);
 
             // Redirect the user to the artist dashboard/homepage
             navigate('/');
